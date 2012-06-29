@@ -13,6 +13,9 @@
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
 @property (nonatomic) BOOL userIsTypingAFloat;
 @property (nonatomic, strong) CalculatorBrain *brain;
+
+- (void)addToHistoryLabel: (NSString *)historyItem 
+                separator: (NSString *) separatorString;
 @end
 
 @implementation CalculatorViewController
@@ -39,10 +42,11 @@
     }
 }
 
-- (void)addToHistoryLabel:(NSString *)historyItem
+- (void)addToHistoryLabel: (NSString *)historyItem 
+                separator: (NSString *) separatorString
 {
-    self.displayHistory.text = [self.displayHistory.text stringByAppendingString:@" "];
     self.displayHistory.text = [self.displayHistory.text stringByAppendingString:historyItem];
+    self.displayHistory.text = [self.displayHistory.text stringByAppendingString:separatorString];
 }
 
 - (IBAction)operationPressed:(UIButton *)sender 
@@ -54,7 +58,7 @@
     double result = [self.brain performOperation:operation];
     self.display.text = [NSString stringWithFormat:@"%g", result];
 
-    [self addToHistoryLabel:operation];
+    [self addToHistoryLabel:operation separator:@" ="];
 }
 
 - (IBAction)enterPressed 
@@ -62,7 +66,7 @@
     [self.brain pushOperand:[self.display.text doubleValue]];
     self.userIsInTheMiddleOfEnteringANumber = NO;
     
-    [self addToHistoryLabel:self.display.text];
+    [self addToHistoryLabel:self.display.text separator:@" "];
 }
 
 - (IBAction)dotPressed 
@@ -84,5 +88,16 @@
     self.userIsTypingAFloat = NO;
     self.userIsInTheMiddleOfEnteringANumber = NO;
     [self.brain clear];
+}
+
+- (IBAction)backspacePressed 
+{
+    self.display.text = [self.display.text substringToIndex:self.display.text.length - 1];
+    
+    if (self.display.text.length == 0){
+        self.display.text = @"0";
+        self.userIsInTheMiddleOfEnteringANumber = NO;
+        self.userIsTypingAFloat = NO;
+    }
 }
 @end
