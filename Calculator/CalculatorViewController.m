@@ -11,9 +11,9 @@
 
 @interface CalculatorViewController ()
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
-@property (nonatomic) BOOL userIsTypingAFloat;
 @property (nonatomic, strong) CalculatorBrain *brain;
 
+- (BOOL)userIsTypingAFloat;
 - (void)addToHistoryLabel: (NSString *)historyItem 
                 separator: (NSString *) separatorString;
 @end
@@ -23,7 +23,6 @@
 @synthesize display;
 @synthesize displayHistory;
 @synthesize userIsInTheMiddleOfEnteringANumber;
-@synthesize userIsTypingAFloat;
 @synthesize brain = _brain;
 
 - (CalculatorBrain *)brain{
@@ -42,11 +41,17 @@
     }
 }
 
+- (BOOL) userIsTypingAFloat
+{
+    NSRange range = [self.display.text rangeOfString:@"."];
+    return !(range.location == NSNotFound);
+}
+
 - (void)addToHistoryLabel: (NSString *)historyItem 
                 separator: (NSString *) separatorString
 {
-    self.displayHistory.text = [self.displayHistory.text stringByAppendingString:historyItem];
-    self.displayHistory.text = [self.displayHistory.text stringByAppendingString:separatorString];
+    NSString *newText = [NSString stringWithFormat:@"%@%@", historyItem, separatorString];
+    self.displayHistory.text = [self.displayHistory.text stringByAppendingString:newText];
 }
 
 - (IBAction)operationPressed:(UIButton *)sender 
@@ -72,7 +77,7 @@
 - (IBAction)dotPressed 
 {
     if (self.userIsInTheMiddleOfEnteringANumber){
-        if (!self.userIsTypingAFloat){
+        if (![self userIsTypingAFloat]){
             self.display.text = [self.display.text stringByAppendingString:@"."];
         }
     }else {
@@ -85,7 +90,6 @@
 {
     self.display.text = @"0";
     self.displayHistory.text = @"";
-    self.userIsTypingAFloat = NO;
     self.userIsInTheMiddleOfEnteringANumber = NO;
     [self.brain clear];
 }
@@ -97,7 +101,6 @@
     if (self.display.text.length == 0){
         self.display.text = @"0";
         self.userIsInTheMiddleOfEnteringANumber = NO;
-        self.userIsTypingAFloat = NO;
     }
 }
 @end
