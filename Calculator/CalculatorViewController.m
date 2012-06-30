@@ -50,8 +50,8 @@
 - (void)addToHistoryLabel: (NSString *)historyItem 
                 separator: (NSString *) separatorString
 {
-    NSString *newText = [NSString stringWithFormat:@"%@%@", historyItem, separatorString];
-    self.displayHistory.text = [self.displayHistory.text stringByAppendingString:newText];
+    NSString *textToAppend = [NSString stringWithFormat:@"%@%@", historyItem, separatorString];
+    self.displayHistory.text = [self.displayHistory.text stringByAppendingString:textToAppend];
 }
 
 - (IBAction)operationPressed:(UIButton *)sender 
